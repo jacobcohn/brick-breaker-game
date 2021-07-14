@@ -1,11 +1,13 @@
 import elements from './elements';
 
-const ball = (() => {
-  const radius = 10;
-  let x = radius + Math.floor(Math.random() * (elements.width - 2 * radius));
-  let y = radius + Math.floor(Math.random() * (elements.height - 2 * radius));
-  let dx = 5 + Math.floor(Math.random() * 2);
-  let dy = 5 + Math.floor(Math.random() * 2);
+const CreateBall = (givenAngle) => {
+  const radius = elements.ballRadius;
+  const speed = 8;
+  const angle = givenAngle;
+  let x = elements.width / 2;
+  let y = elements.height - radius;
+  let dx = speed * Math.cos(angle);
+  let dy = -1 * speed * Math.sin(angle);
 
   const draw = () => {
     elements.ctx.beginPath();
@@ -30,6 +32,6 @@ const ball = (() => {
   };
 
   return { update };
-})();
+};
 
-export default ball;
+export default CreateBall;

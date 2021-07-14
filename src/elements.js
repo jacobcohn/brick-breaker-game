@@ -3,8 +3,9 @@ const elements = (() => {
   const ctx = canvas.getContext('2d');
   const width = 800;
   const height = width * 0.75;
+  const ballRadius = 10;
 
-  return { canvas, ctx, width, height };
+  return { canvas, ctx, width, height, ballRadius };
 })();
 
 export default elements;
