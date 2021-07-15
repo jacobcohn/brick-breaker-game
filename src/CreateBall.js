@@ -2,7 +2,7 @@ import elements from './elements';
 
 const CreateBall = (givenAngle, givenStartingX) => {
   let radius = elements.ballRadius;
-  const speed = 8;
+  const speed = radius * 1.2;
   let angle = givenAngle;
   if (angle < elements.smallestAngle) angle = elements.smallestAngle;
   if (angle > elements.largestAngle) angle = elements.largestAngle;
@@ -22,7 +22,7 @@ const CreateBall = (givenAngle, givenStartingX) => {
   const draw = () => {
     elements.ctx.beginPath();
     elements.ctx.arc(x, y, radius, 0, Math.PI * 2, true);
-    elements.ctx.fillStroke = '#121F2B';
+    elements.ctx.fillStyle = '#121F2B';
     elements.ctx.fill();
   };
 
@@ -47,6 +47,7 @@ const CreateBall = (givenAngle, givenStartingX) => {
     }
     if (inFinish) {
       x += dx;
+
       if (Math.abs(endingX - x) < 1) {
         x = endingX;
         dx = 0;
@@ -64,7 +65,7 @@ const CreateBall = (givenAngle, givenStartingX) => {
       radius *= 0.975; // fixes hexagon bug
       y = elements.height - radius;
       dy = 0;
-      dx = (endingX - x) / 18;
+      dx = (endingX - x) / 15;
     }
 
     update();

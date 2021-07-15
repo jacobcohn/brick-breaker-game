@@ -2,17 +2,33 @@ import elements from './elements';
 import CreateBall from './CreateBall';
 import CreateLine from './CreateLine';
 
+const dom = (() => {
+  const displayScores = (currentScore) => {
+    const highScore = localStorage.getItem('highScore');
+    const currentScoreContent = document.getElementById('currentScoreContent');
+    const highScoreContent = document.getElementById('highScoreContent');
+
+    currentScoreContent.textContent = currentScore;
+    if (currentScore > highScore) {
+      highScoreContent.textContent = currentScore;
+      localStorage.setItem('highScore', currentScore);
+    } else if (currentScore <= highScore) {
+      highScoreContent.textContent = highScore;
+    }
+  };
+
+  const init = () => {
+    const highScore = localStorage.getItem('highScore');
+    if (highScore === null) {
+      localStorage.setItem('highScore', 0);
+    }
+  };
+
+  return { init, displayScores };
+})();
+
 const logic = (() => {
-  const createCanvasDimension = () => {
-    elements.canvas.width = elements.width;
-    elements.canvas.height = elements.height;
-  };
-
-  const mouse = {
-    x: undefined,
-    y: undefined,
-  };
-
+  // variables
   let gamePlaying = false;
   let score = 0;
   let frames = 0;
@@ -20,6 +36,16 @@ const logic = (() => {
   let startingX = elements.width / 2;
   let newStartingX;
   let isMouseInCanvas = false;
+  const mouse = {
+    x: undefined,
+    y: undefined,
+  };
+
+  // functions
+  const createCanvasDimension = () => {
+    elements.canvas.width = elements.width;
+    elements.canvas.height = elements.height;
+  };
 
   const updateMouseCoordinates = (event) => {
     const rect = elements.canvas.getBoundingClientRect();
@@ -33,25 +59,6 @@ const logic = (() => {
     const angle = Math.atan2(yCoordinateFromCenterOfBall, xCoordinateFromCenterOfBall);
     return angle;
   };
-
-  window.addEventListener('mousemove', (e) => {
-    isMouseInCanvas = e.target === elements.canvas;
-    if (!gamePlaying && e.target === elements.canvas) updateMouseCoordinates(e);
-  });
-
-  elements.canvas.addEventListener('click', (e) => {
-    if (gamePlaying) return;
-    updateMouseCoordinates(e);
-    for (let i = 0; i < score; i += 1) {
-      ballsArray.push(CreateBall(findAngle(), startingX));
-      // if (i < 1) {
-      //   ballsArray.push(CreateBall(Math.PI / 3, startingX));
-      // } else {
-      //   ballsArray.push(CreateBall(findAngle(), startingX));
-      // }
-    }
-    gamePlaying = true;
-  });
 
   const isRoundDone = () => {
     let roundDoneAsOfNow = true;
@@ -74,8 +81,33 @@ const logic = (() => {
       startingX = newStartingX;
     }
     newStartingX = undefined;
+
+    dom.displayScores(score);
   };
 
+  // event listeners
+  window.addEventListener('mousemove', (e) => {
+    isMouseInCanvas = e.target === elements.canvas;
+    if (!gamePlaying && e.target === elements.canvas) updateMouseCoordinates(e);
+  });
+
+  elements.canvas.addEventListener('click', (e) => {
+    if (!gamePlaying) {
+      updateMouseCoordinates(e);
+      for (let i = 0; i < score; i += 1) {
+        ballsArray.push(CreateBall(findAngle(), startingX));
+        // in order to have balls end at different x coordinates without bricks
+        // if (i < 1) {
+        //   ballsArray.push(CreateBall(Math.PI / 3, startingX));
+        // } else {
+        //   ballsArray.push(CreateBall(findAngle(), startingX));
+        // }
+      }
+      gamePlaying = true;
+    }
+  });
+
+  // animate
   const animate = () => {
     requestAnimationFrame(animate);
     elements.ctx.clearRect(0, 0, elements.width, elements.height);
@@ -89,7 +121,7 @@ const logic = (() => {
       }
     } else if (gamePlaying) {
       frames += 1;
-      for (let i = 0; i < Math.min(frames / 4, ballsArray.length); i += 1) {
+      for (let i = 0; i < Math.min(frames / 3, ballsArray.length); i += 1) {
         ballsArray[i].update();
 
         if (!ballsArray[i].getInGame()) {
@@ -104,13 +136,15 @@ const logic = (() => {
     }
   };
 
-  const initiate = () => {
+  // init
+  const init = () => {
     createCanvasDimension();
     startNewRound();
     animate();
   };
 
-  return { initiate };
+  return { init };
 })();
 
-logic.initiate();
+dom.init();
+logic.init();
