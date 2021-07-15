@@ -4,8 +4,10 @@ const elements = (() => {
   const width = 800;
   const height = width * 0.75;
   const ballRadius = 10;
+  const smallestAngle = Math.PI / 12;
+  const largestAngle = Math.PI - smallestAngle;
 
-  return { canvas, ctx, width, height, ballRadius };
+  return { canvas, ctx, width, height, ballRadius, smallestAngle, largestAngle };
 })();
 
 export default elements;

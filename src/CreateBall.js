@@ -1,13 +1,23 @@
 import elements from './elements';
 
-const CreateBall = (givenAngle) => {
-  const radius = elements.ballRadius;
+const CreateBall = (givenAngle, givenStartingX) => {
+  let radius = elements.ballRadius;
   const speed = 8;
-  const angle = givenAngle;
-  let x = elements.width / 2;
+  let angle = givenAngle;
+  if (angle < elements.smallestAngle) angle = elements.smallestAngle;
+  if (angle > elements.largestAngle) angle = elements.largestAngle;
+
+  let x = givenStartingX;
   let y = elements.height - radius;
   let dx = speed * Math.cos(angle);
   let dy = -1 * speed * Math.sin(angle);
+
+  let inGame = true;
+  let inFinish = false;
+  let endingX;
+
+  const getInGame = () => inGame;
+  const getX = () => x;
 
   const draw = () => {
     elements.ctx.beginPath();
@@ -17,21 +27,50 @@ const CreateBall = (givenAngle) => {
   };
 
   const update = () => {
-    if (x > elements.width - radius || x < radius) {
-      dx = -dx;
+    if (inGame) {
+      if (x > elements.width - radius || x < radius) {
+        dx = -dx;
+      }
+
+      if (y < radius) {
+        dy = -dy;
+      }
+
+      if (y > elements.height - radius) {
+        inGame = false;
+      }
+
+      x += dx;
+      y += dy;
+
+      draw();
     }
+    if (inFinish) {
+      x += dx;
+      if (Math.abs(endingX - x) < 1) {
+        x = endingX;
+        dx = 0;
+      }
 
-    if (y > elements.height - radius || y < radius) {
-      dy = -dy;
+      draw();
     }
-
-    x += dx;
-    y += dy;
-
-    draw();
   };
 
-  return { update };
+  const finish = (givenX) => {
+    if (endingX === undefined) {
+      inFinish = true;
+      endingX = givenX;
+
+      radius *= 0.975; // fixes hexagon bug
+      y = elements.height - radius;
+      dy = 0;
+      dx = (endingX - x) / 18;
+    }
+
+    update();
+  };
+
+  return { getInGame, getX, draw, update, finish };
 };
 
 export default CreateBall;
