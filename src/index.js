@@ -3,6 +3,11 @@ import CreateBall from './CreateBall';
 import CreateLine from './CreateLine';
 
 const dom = (() => {
+  const createCanvasDimension = () => {
+    elements.canvas.width = elements.width;
+    elements.canvas.height = elements.height;
+  };
+
   const displayScores = (currentScore) => {
     const highScore = localStorage.getItem('highScore');
     const currentScoreContent = document.getElementById('currentScoreContent');
@@ -17,14 +22,34 @@ const dom = (() => {
     }
   };
 
+  const updateBallCounter = (ballsLeft, startingX) => {
+    const ballCounterContent = document.getElementById('ballCounterContent');
+    if (ballsLeft !== 0) {
+      ballCounterContent.textContent = `x${ballsLeft}`;
+    } else {
+      ballCounterContent.textContent = '';
+    }
+
+    let pixelsShifted = Math.floor(startingX * 2 - elements.width);
+    if (pixelsShifted > 0) {
+      ballCounterContent.style.marginLeft = `${pixelsShifted}px`;
+      ballCounterContent.style.marginRight = '0px';
+    } else if (pixelsShifted < 0) {
+      pixelsShifted *= -1;
+      ballCounterContent.style.marginLeft = '0px';
+      ballCounterContent.style.marginRight = `${pixelsShifted}px`;
+    }
+  };
+
   const init = () => {
+    createCanvasDimension();
     const highScore = localStorage.getItem('highScore');
     if (highScore === null) {
       localStorage.setItem('highScore', 0);
     }
   };
 
-  return { init, displayScores };
+  return { displayScores, updateBallCounter, init };
 })();
 
 const logic = (() => {
@@ -42,11 +67,6 @@ const logic = (() => {
   };
 
   // functions
-  const createCanvasDimension = () => {
-    elements.canvas.width = elements.width;
-    elements.canvas.height = elements.height;
-  };
-
   const updateMouseCoordinates = (event) => {
     const rect = elements.canvas.getBoundingClientRect();
     mouse.x = event.x - rect.left;
@@ -83,6 +103,7 @@ const logic = (() => {
     newStartingX = undefined;
 
     dom.displayScores(score);
+    dom.updateBallCounter(score, startingX);
   };
 
   // event listeners
@@ -123,6 +144,7 @@ const logic = (() => {
       frames += 1;
       for (let i = 0; i < Math.min(frames / 3, ballsArray.length); i += 1) {
         ballsArray[i].update();
+        dom.updateBallCounter(ballsArray.length - i - 1, startingX);
 
         if (!ballsArray[i].getInGame()) {
           if (newStartingX === undefined) {
@@ -138,7 +160,6 @@ const logic = (() => {
 
   // init
   const init = () => {
-    createCanvasDimension();
     startNewRound();
     animate();
   };
