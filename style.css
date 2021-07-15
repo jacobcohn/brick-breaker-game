@@ -15,7 +15,7 @@ body {
   width: 100vw;
   min-height: 100vh;
   display: grid;
-  grid-template-rows: 100px 50px auto;
+  grid-template-rows: 100px 50px 620px 30px 1fr;
 }
 
 #titleDiv {
@@ -79,5 +79,17 @@ body {
 
 #gameCanvasContent {
   background: #ECEBF3;
-  margin: 10px 40px 40px 40px;
+  margin: 10px 40px 10px 40px;
+}
+
+#ballCounterDiv {
+  height: 100%;
+  margin: auto;
+  grid-area: 4 / 1 / 5 / 2;
+}
+
+#ballCounterContent {
+  width: auto;
+  margin: 0px;
+  font-size: 22px;
 }
