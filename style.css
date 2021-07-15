@@ -1,9 +1,8 @@
-/* 
-Colors
+/* Colors
 - white (#ECEBF3)
 - red (#E36471)
-- black (#121F2B)
-*/
+- blue (#004A8F)
+- black (#121F2B) */
 
 body {
   color: #121F2B;
@@ -16,7 +15,7 @@ body {
   width: 100vw;
   min-height: 100vh;
   display: grid;
-  grid-template-rows: 100px auto;
+  grid-template-rows: 100px 50px auto;
 }
 
 #titleDiv {
@@ -33,10 +32,46 @@ body {
   margin: 0;
 }
 
+#scoresDiv {
+  width: 100%;
+  height: 100%;
+  margin-top: 2px;
+  grid-area: 2 / 1 / 3 / 2;
+  font-size: 16px;
+  display: grid;
+  grid-template-columns: 1fr 400px 400px 1fr;
+}
+
+#currentScoreDiv {
+  grid-area: 1 / 2 / 2 / 3;
+}
+
+#highScoreDiv {
+  grid-area: 1 / 3 / 2 / 4;
+}
+
+.scoreDiv {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scoreTitle {
+  margin: 0;
+}
+
+.scoreContent {
+  background: #ECEBF3;
+  margin: 0px 0px 0px 8px;
+  padding: 3px;
+  border-radius: 5px;
+}
+
 #gameCanvasDiv {
   width: 100%;
   height: 100%;
-  grid-area: 2 / 1 / 3 / 2;
+  grid-area: 3 / 1 / 4 / 2;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -44,5 +79,5 @@ body {
 
 #gameCanvasContent {
   background: #ECEBF3;
-  margin: 40px;
+  margin: 10px 40px 40px 40px;
 }
