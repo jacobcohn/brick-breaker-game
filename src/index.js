@@ -24,7 +24,7 @@ const dom = (() => {
 
   const updateBallCounter = (ballsLeft, startingX) => {
     const ballCounterContent = document.getElementById('ballCounterContent');
-    if (ballsLeft !== 0) {
+    if (ballsLeft > 0) {
       ballCounterContent.textContent = `x${ballsLeft}`;
     } else {
       ballCounterContent.textContent = '';
@@ -80,6 +80,19 @@ const logic = (() => {
     return angle;
   };
 
+  const updateNewStartingX = (index) => {
+    if (newStartingX === undefined) {
+      newStartingX = ballsArray[index].getX();
+
+      // fixes the ball if it gets stuck on one of the walls
+      if (newStartingX < elements.ballRadius) {
+        newStartingX = elements.ballRadius + 0.1;
+      } else if (newStartingX > elements.width - elements.ballRadius) {
+        newStartingX = elements.width - elements.ballRadius - 0.1;
+      }
+    }
+  };
+
   const isRoundDone = () => {
     let roundDoneAsOfNow = true;
 
@@ -117,12 +130,6 @@ const logic = (() => {
       updateMouseCoordinates(e);
       for (let i = 0; i < score; i += 1) {
         ballsArray.push(CreateBall(findAngle(), startingX));
-        // in order to have balls end at different x coordinates without bricks
-        // if (i < 1) {
-        //   ballsArray.push(CreateBall(Math.PI / 3, startingX));
-        // } else {
-        //   ballsArray.push(CreateBall(findAngle(), startingX));
-        // }
       }
       gamePlaying = true;
     }
@@ -134,27 +141,33 @@ const logic = (() => {
     elements.ctx.clearRect(0, 0, elements.width, elements.height);
 
     if (!gamePlaying) {
-      CreateBall(0, startingX).draw();
+      CreateBall(undefined, startingX).draw();
 
       if (isMouseInCanvas) {
         const line = CreateLine(findAngle(), startingX);
         line.update();
       }
     } else if (gamePlaying) {
-      frames += 1;
-      for (let i = 0; i < Math.min(frames / 3, ballsArray.length); i += 1) {
-        ballsArray[i].update();
-        dom.updateBallCounter(ballsArray.length - i - 1, startingX);
+      const framesTiming = frames / 4;
+      let ballsLeft;
 
-        if (!ballsArray[i].getInGame()) {
-          if (newStartingX === undefined) {
-            newStartingX = ballsArray[i].getX();
-          }
+      for (let i = 0; i < Math.min(framesTiming, ballsArray.length); i += 1) {
+        ballsLeft = ballsArray.length - Math.ceil(Math.min(framesTiming, ballsArray.length));
+
+        if (ballsArray[i].getIsInPlay()) {
+          ballsArray[i].update();
+        } else if (!ballsArray[i].getIsInPlay()) {
+          updateNewStartingX(i);
           ballsArray[i].finish(newStartingX);
         }
 
         if (isRoundDone()) startNewRound();
       }
+
+      if (!isRoundDone()) dom.updateBallCounter(ballsLeft, startingX);
+      if (ballsLeft > 0) CreateBall(undefined, startingX).draw();
+
+      frames += 1;
     }
   };
 
