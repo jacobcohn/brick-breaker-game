@@ -1,6 +1,7 @@
 import elements from './elements';
 import CreateBall from './CreateBall';
 import CreateLine from './CreateLine';
+import CreateBrick from './CreateBrick';
 
 const dom = (() => {
   const createCanvasDimension = () => {
@@ -123,14 +124,6 @@ const logic = (() => {
   const gameOver = () => {};
 
   const nextRoundOfBricks = () => {
-    const lastRowOfBricks = bricksArray[bricksArray.length];
-    if (lastRowOfBricks) {
-      lastRowOfBricks.forEach((brick) => {
-        if (brick !== 0) gameOver();
-      });
-    }
-    bricksArray.pop();
-
     let nonZeroBricks;
     if (score <= 3) nonZeroBricks = 1;
     if (score <= 10 && score > 3) nonZeroBricks = Math.floor(1 + 3 * Math.random());
@@ -160,6 +153,18 @@ const logic = (() => {
 
     const newBricksRow = makeNewBricksRow();
     bricksArray.unshift(newBricksRow);
+
+    // bricksArray.forEach(brickRow => {
+
+    // })
+
+    const lastRowOfBricks = bricksArray[bricksArray.length];
+    if (lastRowOfBricks) {
+      lastRowOfBricks.forEach((brick) => {
+        if (brick !== 0) gameOver();
+      });
+    }
+    bricksArray.pop();
   };
 
   const startNewRound = () => {
@@ -199,6 +204,15 @@ const logic = (() => {
     elements.ctx.clearRect(0, 0, elements.width, elements.height);
 
     if (!gamePlaying) {
+      // const brick1 = CreateBrick(0, elements.brickHeight, 12);
+      // const brick2 = CreateBrick(elements.brickWidth, elements.brickHeight, 200);
+      // const brick3 = CreateBrick(elements.brickWidth * 2, elements.brickHeight, 130);
+      // brick1.newScore(200);
+      // brick2.newScore(200);
+      // brick3.newScore(200);
+      // brick1.draw();
+      // brick2.draw();
+      // brick3.draw();
       CreateBall(undefined, startingX).draw();
 
       if (isMouseInCanvas) {

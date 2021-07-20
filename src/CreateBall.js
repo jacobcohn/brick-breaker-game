@@ -20,8 +20,8 @@ const CreateBall = (givenAngle, givenStartingX) => {
 
   const draw = () => {
     elements.ctx.beginPath();
-    elements.ctx.arc(x, y, radius, 0, Math.PI * 2, true);
     elements.ctx.fillStyle = '#121F2B';
+    elements.ctx.arc(x, y, radius, 0, Math.PI * 2, true);
     elements.ctx.fill();
   };
 
