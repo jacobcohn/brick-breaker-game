@@ -264,7 +264,10 @@ const logic = (() => {
         ballsLeft = ballsArray.length - Math.ceil(Math.min(framesTiming, ballsArray.length));
 
         if (ballsArray[i].getIsInPlay()) {
-          ballsArray[i].update();
+          const bricksHitArray = ballsArray[i].update(bricksArray);
+          bricksHitArray.forEach((brickCoordinateArray) => {
+            bricksArray[brickCoordinateArray[0]][brickCoordinateArray[1]].brickHit();
+          });
         } else if (!ballsArray[i].getIsInPlay()) {
           updateNewStartingX(i);
           ballsArray[i].finish(newStartingX);

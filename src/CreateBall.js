@@ -25,34 +25,50 @@ const CreateBall = (givenAngle, givenStartingX) => {
     elements.ctx.fill();
   };
 
-  const update = () => {
-    if (isInPlay) {
-      if (x > elements.width - radius || x < radius) {
-        dx = -dx;
-      }
-
-      if (y < radius) {
-        dy = -dy;
-      }
-
-      if (y > elements.height - radius) {
-        isInPlay = false;
-      }
-
-      x += dx;
-      y += dy;
-
-      draw();
-    } else if (!isInPlay) {
-      x += dx;
-
-      if (Math.abs(endingX - x) < 1) {
-        x = endingX;
-        dx = 0;
-      }
-
-      draw();
+  const collisionsWithWalls = () => {
+    if (x > elements.width - radius || x < radius) {
+      dx = -dx;
     }
+
+    if (y < radius) {
+      dy = -dy;
+    }
+
+    if (y > elements.height - radius) {
+      isInPlay = false;
+    }
+
+    if (y + dy + radius > elements.height) {
+      const possibleError = 0.01;
+      const ratio = (elements.height - y - radius + possibleError) / dy;
+      dx *= ratio;
+      dy *= ratio;
+    }
+  };
+
+  const collisionsWithBricks = (bricksArray) => {
+    const bricksHitArray = [];
+
+    for (let i = 0; i < elements.numberOfRowsOfBricks; i += 1) {
+      for (let j = 0; j < elements.numberOfBricksPerRow; j += 1) {
+        if (bricksArray[i][j].getHealth() === 0) j += 1;
+
+        // code here
+      }
+    }
+
+    return bricksHitArray;
+  };
+
+  const update = (bricksArray) => {
+    collisionsWithWalls();
+    const bricksHitArray = collisionsWithBricks(bricksArray);
+
+    x += dx;
+    y += dy;
+
+    draw();
+    return bricksHitArray;
   };
 
   const finish = (givenX) => {
@@ -65,7 +81,15 @@ const CreateBall = (givenAngle, givenStartingX) => {
       dx = (endingX - x) / 18;
     }
 
-    update();
+    x += dx;
+
+    const possibleError = 0.01;
+    if (Math.abs(endingX - x) < possibleError) {
+      x = endingX;
+      dx = 0;
+    }
+
+    draw();
   };
 
   return { getIsInPlay, getX, draw, update, finish };
