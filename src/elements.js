@@ -7,9 +7,9 @@ const elements = (() => {
   const smallestAngle = Math.PI / 18;
   const largestAngle = Math.PI - smallestAngle;
   const numberOfBricksPerRow = 6;
-  const numberOfRowsOfBricks = 6;
+  const numberOfRowsOfBricks = 7;
   const brickWidth = width / numberOfBricksPerRow;
-  const brickHeight = height / (numberOfRowsOfBricks + 2);
+  const brickHeight = height / (numberOfRowsOfBricks + 1);
 
   return {
     canvas,

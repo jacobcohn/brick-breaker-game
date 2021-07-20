@@ -1,19 +1,20 @@
 import elements from './elements';
 
 const CreateBrick = (givenX, givenY, givenHealth) => {
-  let x = givenX;
+  const x = givenX;
   let y = givenY;
   let health = givenHealth;
   let score = givenHealth;
+
+  const getHealth = () => health;
 
   const brickHit = () => {
     health -= 1;
   };
 
-  const nextRound = (newX, newY, givenScore) => {
-    x = newX;
-    y = newY;
-    score = givenScore;
+  const nextRound = () => {
+    y += elements.brickHeight;
+    score += 1;
   };
 
   const findRectColor = () => {
@@ -32,13 +33,15 @@ const CreateBrick = (givenX, givenY, givenHealth) => {
   };
 
   const drawRect = () => {
+    const borderSize = elements.brickWidth / 75;
     elements.ctx.beginPath();
-    elements.ctx.setLineDash([]);
-    elements.ctx.lineWidth = elements.width / 200;
-    elements.ctx.strokeStyle = '#ECEBF3';
     elements.ctx.fillStyle = findRectColor();
-    elements.ctx.rect(x, y, elements.brickWidth, elements.brickHeight);
-    elements.ctx.stroke();
+    elements.ctx.rect(
+      x + borderSize,
+      y + borderSize,
+      elements.brickWidth - borderSize * 2,
+      elements.brickHeight - borderSize * 2,
+    );
     elements.ctx.fill();
   };
 
@@ -57,7 +60,7 @@ const CreateBrick = (givenX, givenY, givenHealth) => {
     drawText();
   };
 
-  return { brickHit, nextRound, draw };
+  return { getHealth, brickHit, nextRound, draw };
 };
 
 export default CreateBrick;
