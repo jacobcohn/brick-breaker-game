@@ -57,6 +57,7 @@ const logic = (() => {
   let gamePlaying = false;
   let score = 0;
   let frames = 0;
+  const bricksArray = [];
   let ballsArray = [];
   let startingX = elements.width / 2;
   let newStartingX;
@@ -67,6 +68,20 @@ const logic = (() => {
   };
 
   // functions
+  const resetBricksArray = () => {
+    while (bricksArray.length) bricksArray.pop();
+
+    for (let i = 0; i < elements.numberOfRowsOfBricks; i += 1) {
+      const newBricksRow = [];
+
+      for (let j = 0; j < elements.numberOfBricksPerRow; j += 1) {
+        newBricksRow.push(0);
+      }
+
+      bricksArray.push(newBricksRow);
+    }
+  };
+
   const updateMouseCoordinates = (event) => {
     const rect = elements.canvas.getBoundingClientRect();
     mouse.x = event.x - rect.left;
@@ -105,10 +120,53 @@ const logic = (() => {
     return roundDoneAsOfNow;
   };
 
+  const gameOver = () => {};
+
+  const nextRoundOfBricks = () => {
+    const lastRowOfBricks = bricksArray[bricksArray.length];
+    if (lastRowOfBricks) {
+      lastRowOfBricks.forEach((brick) => {
+        if (brick !== 0) gameOver();
+      });
+    }
+    bricksArray.pop();
+
+    let nonZeroBricks;
+    if (score <= 3) nonZeroBricks = 1;
+    if (score <= 10 && score > 3) nonZeroBricks = Math.floor(1 + 3 * Math.random());
+    if (score <= 20 && score > 10) nonZeroBricks = Math.floor(2 + 3 * Math.random());
+    if (score <= 32 && score > 20) nonZeroBricks = Math.floor(2 + 4 * Math.random());
+    if (score <= 50 && score > 32) nonZeroBricks = Math.floor(3 + 3 * Math.random());
+    if (score > 50) nonZeroBricks = Math.floor(4 + 2 * Math.random());
+
+    const makeNewBricksRow = () => {
+      const bricksRow = [];
+
+      for (let i = 0; i < elements.numberOfBricksPerRow; i += 1) {
+        const randomNumber = Math.ceil(Math.random() * elements.numberOfBricksPerRow);
+        bricksRow.push(randomNumber <= nonZeroBricks ? score : 0);
+      }
+
+      let currentNonZeroBricks = 0;
+      for (let i = 0; i < bricksRow.length; i += 1) {
+        if (bricksRow[i] !== 0) currentNonZeroBricks += 1;
+      }
+      if (currentNonZeroBricks === 0 || currentNonZeroBricks === elements.numberOfBricksPerRow) {
+        return makeNewBricksRow();
+      }
+
+      return bricksRow;
+    };
+
+    const newBricksRow = makeNewBricksRow();
+    bricksArray.unshift(newBricksRow);
+  };
+
   const startNewRound = () => {
     gamePlaying = false;
     score += 1;
     frames = 0;
+    nextRoundOfBricks();
     ballsArray = [];
     if (newStartingX !== undefined) {
       startingX = newStartingX;
@@ -173,6 +231,7 @@ const logic = (() => {
 
   // init
   const init = () => {
+    resetBricksArray();
     startNewRound();
     animate();
   };
