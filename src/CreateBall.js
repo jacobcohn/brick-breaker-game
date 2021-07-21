@@ -38,6 +38,7 @@ const CreateBall = (givenAngle, givenStartingX) => {
       isInPlay = false;
     }
 
+    // slows ball down before hitting ground
     if (y + dy + radius > elements.height) {
       const possibleError = 0.01;
       const ratio = (elements.height - y - radius + possibleError) / dy;
@@ -51,9 +52,55 @@ const CreateBall = (givenAngle, givenStartingX) => {
 
     for (let i = 0; i < elements.numberOfRowsOfBricks; i += 1) {
       for (let j = 0; j < elements.numberOfBricksPerRow; j += 1) {
-        if (bricksArray[i][j].getHealth() === 0) j += 1;
+        if (bricksArray[i][j].getHealth() > 0) {
+          let brickHit = false;
+          const brickStartingX = j * elements.brickWidth;
+          const brickEndingX = (j + 1) * elements.brickWidth;
+          const brickStartingY = i * elements.brickHeight + elements.brickHeightRoom;
+          const brickEndingY = (i + 1) * elements.brickHeight + elements.brickHeightRoom;
 
-        // code here
+          if (
+            x + radius >= brickStartingX &&
+            x - radius <= brickEndingX &&
+            y >= brickStartingY &&
+            y <= brickEndingY
+          ) {
+            console.log('Side Hit', x, y);
+            dx = -dx;
+            brickHit = true;
+          }
+
+          if (
+            x >= brickStartingX &&
+            x <= brickEndingX &&
+            y + radius >= brickStartingY &&
+            y - radius <= brickEndingY
+          ) {
+            console.log('Vertical Hit', x, y);
+            dy = -dy;
+            brickHit += 1;
+          }
+
+          const findDistance = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+
+          if (
+            (findDistance(x, y, brickStartingX, brickStartingY) < radius ||
+              findDistance(x, y, brickStartingX, brickEndingY) < radius ||
+              findDistance(x, y, brickEndingX, brickStartingY) < radius ||
+              findDistance(x, y, brickEndingX, brickEndingY) < radius) &&
+            brickHit === 0
+          ) {
+            console.log('Corner Hit', x, y);
+            dx = -dx;
+            dy = -dy;
+            brickHit += 1;
+          }
+
+          if (brickHit) {
+            bricksHitArray.push([i, j]);
+            console.log(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
+          }
+        }
       }
     }
 
@@ -61,6 +108,7 @@ const CreateBall = (givenAngle, givenStartingX) => {
   };
 
   const update = (bricksArray) => {
+    console.log('Next Frame');
     collisionsWithWalls();
     const bricksHitArray = collisionsWithBricks(bricksArray);
 

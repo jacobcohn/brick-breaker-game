@@ -55,7 +55,7 @@ const CreateBrick = (givenX, givenY, givenHealth) => {
   };
 
   const draw = () => {
-    if (health === 0) return;
+    if (health <= 0) return;
     drawRect();
     drawText();
   };

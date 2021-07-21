@@ -113,7 +113,7 @@ const logic = (() => {
 
     const createBrickWhileUpdatingCounter = (position, randomNumber) => {
       const x = position * elements.brickWidth;
-      const y = elements.brickHeight;
+      const y = elements.brickHeightRoom;
 
       if (randomNumber <= nonzeroBrickProbability) {
         currentNonzeroBricksCounter += 1;
@@ -147,7 +147,7 @@ const logic = (() => {
 
     const lastRowOfBricks = bricksArray[bricksArray.length - 1];
     lastRowOfBricks.forEach((brick) => {
-      if (brick.getHealth() !== 0) gameState = 'gameOver';
+      if (brick.getHealth() > 0) gameState = 'gameOver';
     });
 
     return gameState;
@@ -204,7 +204,9 @@ const logic = (() => {
   };
 
   const gameOver = () => {
-    // code here
+    setTimeout(() => {
+      alert('Game Over');
+    }, 50);
   };
 
   const startNewRound = () => {

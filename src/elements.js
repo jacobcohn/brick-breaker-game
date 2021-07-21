@@ -8,8 +8,10 @@ const elements = (() => {
   const largestAngle = Math.PI - smallestAngle;
   const numberOfBricksPerRow = 6;
   const numberOfRowsOfBricks = 7;
+  const numberOfBrickForHeightRoom = 1;
   const brickWidth = width / numberOfBricksPerRow;
-  const brickHeight = height / (numberOfRowsOfBricks + 1);
+  const brickHeight = height / (numberOfRowsOfBricks + numberOfBrickForHeightRoom);
+  const brickHeightRoom = numberOfBrickForHeightRoom * brickHeight;
 
   return {
     canvas,
@@ -23,6 +25,7 @@ const elements = (() => {
     numberOfRowsOfBricks,
     brickWidth,
     brickHeight,
+    brickHeightRoom,
   };
 })();
 
