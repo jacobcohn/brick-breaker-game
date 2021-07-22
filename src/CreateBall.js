@@ -147,15 +147,57 @@ const CreateBall = (givenAngle, givenStartingX) => {
     return 'corner';
   };
 
-  const cornerCollision = () => {
+  const findCornerX = (brickStartingX, brickEndingX) => {
+    if (x < brickStartingX) return brickStartingX;
+    return brickEndingX;
+  };
+  const findCornerY = (brickStartingY, brickEndingY) => {
+    if (y < brickStartingY) return brickStartingY;
+    return brickEndingY;
+  };
+
+  const findCoordinatesOfCornerCollision = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
+    let scalarExponent = 1;
+    let negative = true;
+    let collisionX = x;
+    let collisionY = y;
+    const cornerX = findCornerX(brickStartingX, brickEndingX);
+    const cornerY = findCornerY(brickStartingY, brickEndingY);
+
+    while (Math.abs(findDistance(collisionX, collisionY, cornerX, cornerY) - radius) >= 0.01) {
+      let scalar = (1 / 2) ** scalarExponent;
+      if (negative) scalar *= -1;
+
+      collisionX += dx * scalar;
+      collisionY += dy * scalar;
+
+      if (findDistance(collisionX, collisionY, cornerX, cornerY) < radius) {
+        negative = true;
+      } else {
+        negative = false;
+      }
+      scalarExponent += 1;
+    }
+
+    return [collisionX, collisionY];
+  };
+
+  const newBallDirectionForCornerCollision = (collisionX, collisionY) => {
+    console.log(collisionX, collisionY);
+  };
+
+  const cornerCollision = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
+    const coordinates = findCoordinatesOfCornerCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
+    newBallDirectionForCornerCollision(coordinates[0], coordinates[1]);
+
     dx = -dx;
     dy = -dy;
   };
 
-  const newBallDirection = (typeOfCollision) => {
+  const newBallDirection = (typeOfCollision, brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
     if (typeOfCollision === 'side') dx = -dx;
     if (typeOfCollision === 'vertical') dy = -dy;
-    if (typeOfCollision === 'corner') cornerCollision();
+    if (typeOfCollision === 'corner') cornerCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
   };
 
   const collisionsWithBricks = (bricksArray) => {
@@ -174,7 +216,8 @@ const CreateBall = (givenAngle, givenStartingX) => {
 
           if (brickHit) {
             bricksHitArray.push([i, j]);
-            newBallDirection(findTypeOfCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY));
+            const typeOfCollision = findTypeOfCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
+            newBallDirection(typeOfCollision, brickStartingX, brickEndingX, brickStartingY, brickEndingY);
           }
         }
       }
