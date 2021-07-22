@@ -127,10 +127,7 @@ const logic = (() => {
       bricksRow.push(createBrickWhileUpdatingCounter(i, randomNumber));
     }
 
-    if (
-      currentNonzeroBricksCounter === 0 ||
-      currentNonzeroBricksCounter === elements.numberOfBricksPerRow
-    ) {
+    if (currentNonzeroBricksCounter === 0 || currentNonzeroBricksCounter === elements.numberOfBricksPerRow) {
       return makeAcceptableBricksRow(nonzeroBrickProbability);
     }
 

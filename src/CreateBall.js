@@ -47,58 +47,107 @@ const CreateBall = (givenAngle, givenStartingX) => {
     }
   };
 
+  // functions for collisionsWithBricks
+  const findDistance = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+
+  const isSideCollisionDetection = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
+    if (x + radius >= brickStartingX && x - radius <= brickEndingX && y >= brickStartingY && y <= brickEndingY) {
+      return true;
+    }
+    return false;
+  };
+
+  const isVerticalCollisionDetection = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
+    if (x >= brickStartingX && x <= brickEndingX && y + radius >= brickStartingY && y - radius <= brickEndingY) {
+      return true;
+    }
+    return false;
+  };
+
+  const isCornerCollisionDetection = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
+    if (
+      findDistance(x, y, brickStartingX, brickStartingY) < radius ||
+      findDistance(x, y, brickStartingX, brickEndingY) < radius ||
+      findDistance(x, y, brickEndingX, brickStartingY) < radius ||
+      findDistance(x, y, brickEndingX, brickEndingY) < radius
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const isBrickHit = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
+    if (isSideCollisionDetection(brickStartingX, brickEndingX, brickStartingY, brickEndingY)) return true;
+    if (isVerticalCollisionDetection(brickStartingX, brickEndingX, brickStartingY, brickEndingY)) return true;
+    if (isCornerCollisionDetection(brickStartingX, brickEndingX, brickStartingY, brickEndingY)) return true;
+    return false;
+  };
+
+  const conflictingCollision = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
+    if ((x <= brickStartingX && x - dx >= brickStartingX) || (x >= brickStartingX && x - dx <= brickStartingX)) {
+      if (y <= brickStartingY) {
+        console.log('top left corner and top section');
+      } else {
+        console.log('bottom left corner and bottom section');
+      }
+    } else if ((x <= brickEndingX && x - dx >= brickEndingX) || (x >= brickEndingX && x - dx <= brickEndingX)) {
+      if (y <= brickStartingY) {
+        console.log('top right corner and top section');
+      } else {
+        console.log('bottom right corner and bottom section');
+      }
+    } else if ((y <= brickStartingY && y - dy >= brickStartingY) || (y >= brickStartingY && y - dy <= brickStartingY)) {
+      if (x <= brickStartingX) {
+        console.log('top left corner and left section');
+      } else {
+        console.log('top right corner and right section');
+      }
+    } else if ((y <= brickEndingY && y - dy >= brickEndingY) || (y >= brickEndingY && y - dy <= brickEndingY)) {
+      if (x <= brickStartingX) {
+        console.log('bottom left corner and left section');
+      } else {
+        console.log('bottom right corner and right section');
+      }
+    }
+    return false;
+  };
+
+  const findTypeOfCollision = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
+    const conflictingCollisionResult = conflictingCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
+    if (conflictingCollisionResult) return conflictingCollisionResult;
+    if (y < brickEndingY && y > brickStartingY) return 'side';
+    if (x < brickEndingX && x > brickStartingX) return 'vertical';
+    return 'corner';
+  };
+
+  const cornerCollision = () => {
+    dx = -dx;
+    dy = -dy;
+  };
+
+  const newBallDirection = (typeOfCollision) => {
+    if (typeOfCollision === 'side') dx = -dx;
+    if (typeOfCollision === 'vertical') dy = -dy;
+    if (typeOfCollision === 'corner') cornerCollision();
+  };
+
   const collisionsWithBricks = (bricksArray) => {
     const bricksHitArray = [];
 
     for (let i = 0; i < elements.numberOfRowsOfBricks; i += 1) {
       for (let j = 0; j < elements.numberOfBricksPerRow; j += 1) {
         if (bricksArray[i][j].getHealth() > 0) {
-          let brickHit = false;
           const brickStartingX = j * elements.brickWidth;
           const brickEndingX = (j + 1) * elements.brickWidth;
           const brickStartingY = i * elements.brickHeight + elements.brickHeightRoom;
           const brickEndingY = (i + 1) * elements.brickHeight + elements.brickHeightRoom;
 
-          if (
-            x + radius >= brickStartingX &&
-            x - radius <= brickEndingX &&
-            y >= brickStartingY &&
-            y <= brickEndingY
-          ) {
-            console.log('Side Hit', x, y);
-            dx = -dx;
-            brickHit = true;
-          }
-
-          if (
-            x >= brickStartingX &&
-            x <= brickEndingX &&
-            y + radius >= brickStartingY &&
-            y - radius <= brickEndingY
-          ) {
-            console.log('Vertical Hit', x, y);
-            dy = -dy;
-            brickHit += 1;
-          }
-
-          const findDistance = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-
-          if (
-            (findDistance(x, y, brickStartingX, brickStartingY) < radius ||
-              findDistance(x, y, brickStartingX, brickEndingY) < radius ||
-              findDistance(x, y, brickEndingX, brickStartingY) < radius ||
-              findDistance(x, y, brickEndingX, brickEndingY) < radius) &&
-            brickHit === 0
-          ) {
-            console.log('Corner Hit', x, y);
-            dx = -dx;
-            dy = -dy;
-            brickHit += 1;
-          }
+          let brickHit = false;
+          if (isBrickHit(brickStartingX, brickEndingX, brickStartingY, brickEndingY)) brickHit = true;
 
           if (brickHit) {
             bricksHitArray.push([i, j]);
-            console.log(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
+            newBallDirection(findTypeOfCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY));
           }
         }
       }
@@ -108,7 +157,6 @@ const CreateBall = (givenAngle, givenStartingX) => {
   };
 
   const update = (bricksArray) => {
-    console.log('Next Frame');
     collisionsWithWalls();
     const bricksHitArray = collisionsWithBricks(bricksArray);
 
