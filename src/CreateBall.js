@@ -148,11 +148,11 @@ const CreateBall = (givenAngle, givenStartingX) => {
   };
 
   const findCornerX = (brickStartingX, brickEndingX) => {
-    if (x < brickStartingX) return brickStartingX;
+    if (x < brickStartingX || x - dx < brickStartingX) return brickStartingX;
     return brickEndingX;
   };
   const findCornerY = (brickStartingY, brickEndingY) => {
-    if (y < brickStartingY) return brickStartingY;
+    if (y < brickStartingY || y - dy < brickStartingY) return brickStartingY;
     return brickEndingY;
   };
 
@@ -179,19 +179,30 @@ const CreateBall = (givenAngle, givenStartingX) => {
       scalarExponent += 1;
     }
 
-    return [collisionX, collisionY];
+    return [collisionX, collisionY, cornerX, cornerY];
   };
 
-  const newBallDirectionForCornerCollision = (collisionX, collisionY) => {
-    console.log(collisionX, collisionY);
+  const newBallDirectionForCornerCollision = (collisionX, collisionY, cornerX, cornerY) => {
+    // find the projection of the velocityVector on the collisionToCornerVector and flip the direction
+    // then, find the vector that was left untouched from the velocityVector
+    // finally, add these two vectors together to get the new ball direction
+
+    const velocityVector = [dx, dy];
+    const collisionToCornerVector = [collisionX - cornerX, collisionY - cornerY];
+
+    const scalar =
+      (velocityVector[0] * collisionToCornerVector[0] + velocityVector[1] * collisionToCornerVector[1]) /
+      (collisionToCornerVector[0] ** 2 + collisionToCornerVector[1] ** 2);
+    const projectionVector = collisionToCornerVector.map((element) => element * scalar);
+    const vectorLeftUntouched = [velocityVector[0] - projectionVector[0], velocityVector[1] - projectionVector[1]];
+
+    dx = vectorLeftUntouched[0] - projectionVector[0];
+    dy = vectorLeftUntouched[1] - projectionVector[1];
   };
 
   const cornerCollision = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
     const coordinates = findCoordinatesOfCornerCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
-    newBallDirectionForCornerCollision(coordinates[0], coordinates[1]);
-
-    dx = -dx;
-    dy = -dy;
+    newBallDirectionForCornerCollision(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
   };
 
   const newBallDirection = (typeOfCollision, brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
@@ -206,10 +217,10 @@ const CreateBall = (givenAngle, givenStartingX) => {
     for (let i = 0; i < elements.numberOfRowsOfBricks; i += 1) {
       for (let j = 0; j < elements.numberOfBricksPerRow; j += 1) {
         if (bricksArray[i][j].getHealth() > 0) {
-          const brickStartingX = j * elements.brickWidth;
-          const brickEndingX = (j + 1) * elements.brickWidth;
-          const brickStartingY = i * elements.brickHeight + elements.brickHeightRoom;
-          const brickEndingY = (i + 1) * elements.brickHeight + elements.brickHeightRoom;
+          const brickStartingX = j * elements.brickWidth + elements.brickBorderSize;
+          const brickEndingX = (j + 1) * elements.brickWidth - elements.brickBorderSize;
+          const brickStartingY = i * elements.brickHeight + elements.brickHeightRoom + elements.brickBorderSize;
+          const brickEndingY = (i + 1) * elements.brickHeight + elements.brickHeightRoom - elements.brickBorderSize;
 
           let brickHit = false;
           if (isBrickHit(brickStartingX, brickEndingX, brickStartingY, brickEndingY)) brickHit = true;

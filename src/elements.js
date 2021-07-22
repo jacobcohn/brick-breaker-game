@@ -12,6 +12,7 @@ const elements = (() => {
   const brickWidth = width / numberOfBricksPerRow;
   const brickHeight = height / (numberOfRowsOfBricks + numberOfBrickForHeightRoom);
   const brickHeightRoom = numberOfBrickForHeightRoom * brickHeight;
+  const brickBorderSize = brickWidth / 75;
 
   return {
     canvas,
@@ -26,6 +27,7 @@ const elements = (() => {
     brickWidth,
     brickHeight,
     brickHeightRoom,
+    brickBorderSize,
   };
 })();
 

@@ -33,14 +33,13 @@ const CreateBrick = (givenX, givenY, givenHealth) => {
   };
 
   const drawRect = () => {
-    const borderSize = elements.brickWidth / 75;
     elements.ctx.beginPath();
     elements.ctx.fillStyle = findRectColor();
     elements.ctx.rect(
-      x + borderSize,
-      y + borderSize,
-      elements.brickWidth - borderSize * 2,
-      elements.brickHeight - borderSize * 2,
+      x + elements.brickBorderSize,
+      y + elements.brickBorderSize,
+      elements.brickWidth - elements.brickBorderSize * 2,
+      elements.brickHeight - elements.brickBorderSize * 2,
     );
     elements.ctx.fill();
   };
