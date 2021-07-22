@@ -69,7 +69,6 @@ const logic = (() => {
   };
 
   // brick functions
-
   const resetBricksArray = () => {
     while (bricksArray.length) bricksArray.pop();
 
@@ -100,9 +99,10 @@ const logic = (() => {
     if (score <= 3) nonzeroBrickProbability = 1;
     if (score <= 10 && score > 3) nonzeroBrickProbability = Math.floor(1 + 3 * Math.random());
     if (score <= 20 && score > 10) nonzeroBrickProbability = Math.floor(2 + 3 * Math.random());
-    if (score <= 32 && score > 20) nonzeroBrickProbability = Math.floor(2 + 4 * Math.random());
-    if (score <= 50 && score > 32) nonzeroBrickProbability = Math.floor(3 + 3 * Math.random());
-    if (score > 50) nonzeroBrickProbability = Math.floor(4 + 2 * Math.random());
+    if (score <= 30 && score > 20) nonzeroBrickProbability = Math.floor(2 + 4 * Math.random());
+    if (score <= 40 && score > 30) nonzeroBrickProbability = Math.floor(3 + 3 * Math.random());
+    if (score <= 40 && score > 50) nonzeroBrickProbability = Math.floor(4 + 2 * Math.random());
+    if (score > 50) nonzeroBrickProbability = 5;
 
     return nonzeroBrickProbability;
   };
@@ -161,7 +161,6 @@ const logic = (() => {
   };
 
   // all other functions
-
   const updateMouseCoordinates = (event) => {
     const rect = elements.canvas.getBoundingClientRect();
     mouse.x = event.x - rect.left;

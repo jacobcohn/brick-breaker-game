@@ -83,32 +83,59 @@ const CreateBall = (givenAngle, givenStartingX) => {
     return false;
   };
 
+  const resolveXConflictingCollision = (brickX, brickYWithRadius, leftResult, rightResult) => {
+    const ratio = (y - brickYWithRadius) / dy;
+    const collisionX = x - ratio * dx;
+    if (collisionX < brickX) return leftResult;
+    if (collisionX > brickX) return rightResult;
+    return 'vertical';
+  };
+
+  const resolveYConflictingCollision = (brickXWithRadius, brickY, topResult, bottomResult) => {
+    const ratio = (x - brickXWithRadius) / dx;
+    const collisionY = y - ratio * dy;
+    if (collisionY < brickY) return topResult;
+    if (collisionY > brickY) return bottomResult;
+    return 'side';
+  };
+
   const conflictingCollision = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
     if ((x <= brickStartingX && x - dx >= brickStartingX) || (x >= brickStartingX && x - dx <= brickStartingX)) {
       if (y <= brickStartingY) {
-        console.log('top left corner and top section');
-      } else {
-        console.log('bottom left corner and bottom section');
+        // top left corner and top section
+        return resolveXConflictingCollision(brickStartingX, brickStartingY - radius, 'corner', 'vertical');
       }
-    } else if ((x <= brickEndingX && x - dx >= brickEndingX) || (x >= brickEndingX && x - dx <= brickEndingX)) {
-      if (y <= brickStartingY) {
-        console.log('top right corner and top section');
-      } else {
-        console.log('bottom right corner and bottom section');
-      }
-    } else if ((y <= brickStartingY && y - dy >= brickStartingY) || (y >= brickStartingY && y - dy <= brickStartingY)) {
-      if (x <= brickStartingX) {
-        console.log('top left corner and left section');
-      } else {
-        console.log('top right corner and right section');
-      }
-    } else if ((y <= brickEndingY && y - dy >= brickEndingY) || (y >= brickEndingY && y - dy <= brickEndingY)) {
-      if (x <= brickStartingX) {
-        console.log('bottom left corner and left section');
-      } else {
-        console.log('bottom right corner and right section');
-      }
+      // bottom left corner and bottom section
+      return resolveXConflictingCollision(brickStartingX, brickEndingY + radius, 'corner', 'vertical');
     }
+
+    if ((x <= brickEndingX && x - dx >= brickEndingX) || (x >= brickEndingX && x - dx <= brickEndingX)) {
+      if (y <= brickStartingY) {
+        // top right corner and top section
+        return resolveXConflictingCollision(brickEndingX, brickStartingY - radius, 'vertical', 'corner');
+      }
+      // bottom right corner and bottom section
+      return resolveXConflictingCollision(brickEndingX, brickEndingY + radius, 'vertical', 'corner');
+    }
+
+    if ((y <= brickStartingY && y - dy >= brickStartingY) || (y >= brickStartingY && y - dy <= brickStartingY)) {
+      if (x <= brickStartingX) {
+        // top left corner and left section
+        return resolveYConflictingCollision(brickStartingX - radius, brickStartingY, 'corner', 'side');
+      }
+      // top right corner and right section
+      return resolveYConflictingCollision(brickEndingX + radius, brickStartingY, 'corner', 'side');
+    }
+
+    if ((y <= brickEndingY && y - dy >= brickEndingY) || (y >= brickEndingY && y - dy <= brickEndingY)) {
+      if (x <= brickStartingX) {
+        // bottom left corner and left section
+        return resolveYConflictingCollision(brickStartingX - radius, brickEndingY, 'side', 'corner');
+      }
+      // bottom right corner and right section
+      return resolveYConflictingCollision(brickEndingX + radius, brickEndingY, 'side', 'corner');
+    }
+
     return false;
   };
 
