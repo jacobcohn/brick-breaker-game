@@ -15,7 +15,7 @@ body {
   width: 100vw;
   min-height: 100vh;
   display: grid;
-  grid-template-rows: 100px 50px 620px 30px 1fr;
+  grid-template-rows: 100px 50px auto 30px 1fr;
 }
 
 #titleDiv {
@@ -91,5 +91,4 @@ body {
 #ballCounterContent {
   width: auto;
   margin: 0px;
-  font-size: 22px;
 }
