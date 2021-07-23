@@ -40,6 +40,8 @@ const dom = (() => {
       ballCounterContent.style.marginLeft = '0px';
       ballCounterContent.style.marginRight = `${pixelsShifted}px`;
     }
+
+    ballCounterContent.style.fontSize = `${elements.width / 35}px`;
   };
 
   const init = () => {
@@ -101,7 +103,7 @@ const logic = (() => {
     if (score <= 20 && score > 10) nonzeroBrickProbability = Math.floor(2 + 3 * Math.random());
     if (score <= 30 && score > 20) nonzeroBrickProbability = Math.floor(2 + 4 * Math.random());
     if (score <= 40 && score > 30) nonzeroBrickProbability = Math.floor(3 + 3 * Math.random());
-    if (score <= 40 && score > 50) nonzeroBrickProbability = Math.floor(4 + 2 * Math.random());
+    if (score <= 50 && score > 40) nonzeroBrickProbability = Math.floor(4 + 2 * Math.random());
     if (score > 50) nonzeroBrickProbability = 5;
 
     return nonzeroBrickProbability;

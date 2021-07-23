@@ -15,6 +15,9 @@ const CreateBall = (givenAngle, givenStartingX) => {
   let isInPlay = true;
   let endingX;
 
+  let numberOfBricksHit = 0;
+  let bricksSinceFirstBrickHit = 0;
+
   const getIsInPlay = () => isInPlay;
   const getX = () => x;
 
@@ -28,10 +31,18 @@ const CreateBall = (givenAngle, givenStartingX) => {
   const collisionsWithWalls = () => {
     if (x > elements.width - radius || x < radius) {
       dx = -dx;
+
+      // in case it also hits a brick
+      numberOfBricksHit += 2;
+      bricksSinceFirstBrickHit += elements.numberOfBricksPerRow + 1;
     }
 
     if (y < radius) {
       dy = -dy;
+
+      // in case it also hits a brick
+      numberOfBricksHit += 2;
+      bricksSinceFirstBrickHit += elements.numberOfBricksPerRow + 1;
     }
 
     if (y > elements.height - radius) {
@@ -211,7 +222,20 @@ const CreateBall = (givenAngle, givenStartingX) => {
     if (typeOfCollision === 'corner') cornerCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
   };
 
-  const collisionsWithBricks = (bricksArray) => {
+  const newBallDirectionForMoreThanOneBrick = (originalDx, originalDy) => {
+    if (numberOfBricksHit === 2 && bricksSinceFirstBrickHit === 1) {
+      dx = originalDx;
+      dy = -originalDy;
+    } else if (numberOfBricksHit === 2 && bricksSinceFirstBrickHit === elements.numberOfBricksPerRow) {
+      dx = -originalDx;
+      dy = originalDy;
+    } else {
+      dx = -originalDx;
+      dy = -originalDy;
+    }
+  };
+
+  const collisionsWithBricks = (bricksArray, originalDx, originalDy) => {
     const bricksHitArray = [];
 
     for (let i = 0; i < elements.numberOfRowsOfBricks; i += 1) {
@@ -227,10 +251,19 @@ const CreateBall = (givenAngle, givenStartingX) => {
 
           if (brickHit) {
             bricksHitArray.push([i, j]);
-            const typeOfCollision = findTypeOfCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
-            newBallDirection(typeOfCollision, brickStartingX, brickEndingX, brickStartingY, brickEndingY);
+
+            if (!numberOfBricksHit) {
+              numberOfBricksHit += 1;
+              const typeOfCollision = findTypeOfCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
+              newBallDirection(typeOfCollision, brickStartingX, brickEndingX, brickStartingY, brickEndingY);
+            } else {
+              numberOfBricksHit += 1;
+              newBallDirectionForMoreThanOneBrick(originalDx, originalDy);
+            }
           }
         }
+
+        if (numberOfBricksHit) bricksSinceFirstBrickHit += 1;
       }
     }
 
@@ -238,11 +271,17 @@ const CreateBall = (givenAngle, givenStartingX) => {
   };
 
   const update = (bricksArray) => {
+    const originalDx = dx;
+    const originalDy = dy;
+
     collisionsWithWalls();
-    const bricksHitArray = collisionsWithBricks(bricksArray);
+    const bricksHitArray = collisionsWithBricks(bricksArray, originalDx, originalDy);
 
     x += dx;
     y += dy;
+
+    numberOfBricksHit = 0;
+    bricksSinceFirstBrickHit = 0;
 
     draw();
     return bricksHitArray;

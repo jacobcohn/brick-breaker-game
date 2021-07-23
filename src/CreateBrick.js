@@ -46,10 +46,10 @@ const CreateBrick = (givenX, givenY, givenHealth) => {
 
   const drawText = () => {
     elements.ctx.beginPath();
-    elements.ctx.font = `${elements.brickHeight * 0.4}px Trebuchet MS`;
+    elements.ctx.font = `${elements.brickHeight * 0.45}px Trebuchet MS`;
     elements.ctx.textAlign = 'center';
     elements.ctx.textBaseline = 'middle';
-    elements.ctx.fillStyle = '#121F2B';
+    elements.ctx.fillStyle = '#ECEBF3';
     elements.ctx.fillText(health, x + elements.brickWidth / 2, y + elements.brickHeight / 2);
   };
 
