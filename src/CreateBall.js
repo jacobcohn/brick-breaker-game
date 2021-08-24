@@ -211,9 +211,23 @@ const CreateBall = (givenAngle, givenStartingX) => {
     dy = vectorLeftUntouched[1] - projectionVector[1];
   };
 
+  const ifDyTooCloseToZero = () => {
+    if (dy <= speed / 25 && dy >= 0) {
+      dy = speed / 25;
+      if (dx >= 0) dx = Math.sqrt(speed ** 2 + dy ** 2);
+      if (dx < 0) dx = -Math.sqrt(speed ** 2 + dy ** 2);
+    } else if (dy >= -speed / 25 && dy < 0) {
+      dy = -speed / 25;
+      if (dx >= 0) dx = Math.sqrt(speed ** 2 + dy ** 2);
+      if (dx < 0) dx = -Math.sqrt(speed ** 2 + dy ** 2);
+    }
+  };
+
   const cornerCollision = (brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {
     const coordinates = findCoordinatesOfCornerCollision(brickStartingX, brickEndingX, brickStartingY, brickEndingY);
     newBallDirectionForCornerCollision(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
+
+    ifDyTooCloseToZero();
   };
 
   const newBallDirection = (typeOfCollision, brickStartingX, brickEndingX, brickStartingY, brickEndingY) => {

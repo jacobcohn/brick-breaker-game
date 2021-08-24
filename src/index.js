@@ -3,10 +3,20 @@ import CreateBall from './CreateBall';
 import CreateLine from './CreateLine';
 import CreateBrick from './CreateBrick';
 
+/*
+gameOver
+*/
+
 const dom = (() => {
   const createCanvasDimension = () => {
     elements.canvas.width = elements.width;
     elements.canvas.height = elements.height;
+  };
+
+  const gameOverBtnRefreshesPage = () => {
+    document.getElementById('gOMNewGameBtn').addEventListener('click', () => {
+      window.location.reload();
+    });
   };
 
   const displayScores = (currentScore) => {
@@ -44,15 +54,24 @@ const dom = (() => {
     ballCounterContent.style.fontSize = `${elements.width / 35}px`;
   };
 
+  const displayGameOverModal = (currentScore) => {
+    document.getElementById('gOMBackground').classList.toggle('notVisible');
+    document.getElementById('gOMBackground').classList.toggle('visible');
+
+    document.getElementById('gOMHighScoreContent').textContent = localStorage.getItem('highScore');
+    document.getElementById('gOMFinalScoreContent').textContent = currentScore;
+  };
+
   const init = () => {
     createCanvasDimension();
+    gameOverBtnRefreshesPage();
     const highScore = localStorage.getItem('highScore');
     if (highScore === null) {
       localStorage.setItem('highScore', 0);
     }
   };
 
-  return { displayScores, updateBallCounter, init };
+  return { displayScores, updateBallCounter, displayGameOverModal, init };
 })();
 
 const logic = (() => {
@@ -203,8 +222,8 @@ const logic = (() => {
 
   const gameOver = () => {
     setTimeout(() => {
-      alert('Game Over');
-    }, 50);
+      dom.displayGameOverModal(score);
+    }, 300);
   };
 
   const startNewRound = () => {
@@ -225,7 +244,7 @@ const logic = (() => {
   // event listeners
   window.addEventListener('mousemove', (e) => {
     isMouseInCanvas = e.target === elements.canvas;
-    if (!gamePlaying && e.target === elements.canvas) updateMouseCoordinates(e);
+    if (isMouseInCanvas) updateMouseCoordinates(e);
   });
 
   elements.canvas.addEventListener('click', (e) => {

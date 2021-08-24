@@ -92,3 +92,78 @@ body {
   width: auto;
   margin: 0px;
 }
+
+/* gameOverModal */
+.notVisible {
+  display: none;
+}
+
+.visible {
+  display: flex;
+}
+
+#gOMBackground {
+  background: rgba(227, 100, 113, 0.3); /* rgba(18, 31, 43, 0.4); */
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+#gOMContent {
+  background: #121F2B; /* #004A8F; */
+  color: #ECEBF3;
+  width: 250px;
+  min-height: 200px;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#gOMTitleDiv {
+  margin-bottom: 10px;
+}
+
+#gOMTitleContent {
+  text-decoration: underline;
+}
+
+.gOMScoreDiv {
+  height: 30px;
+  margin: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.gOMScoreContent {
+  margin-left: 10px;
+}
+
+#gOMNewGameDiv {
+  margin: 30px 10px 0px 10px;
+  width: 100%;
+  height: 50px;
+}
+
+#gOMNewGameBtn {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 25px;
+  color: #121F2B;
+  background: #ECEBF3;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 5px;
+}
+
+#gOMNewGameBtn:hover {
+  background: rgba(236, 235, 243, 0.85);
+}

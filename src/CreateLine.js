@@ -22,10 +22,7 @@ const CreateLine = (givenAngle, givenStartingX) => {
     if (angle < elements.smallestAngle) angle = elements.smallestAngle;
     if (angle > elements.largestAngle) angle = elements.largestAngle;
 
-    const topRightAngle = Math.atan2(
-      elements.height - elements.ballRadius,
-      elements.width - startingX,
-    );
+    const topRightAngle = Math.atan2(elements.height - elements.ballRadius, elements.width - startingX);
     const topLeftAngle = Math.atan2(elements.height - elements.ballRadius, -1 * startingX);
 
     if (angle < topRightAngle) {
