@@ -2,7 +2,7 @@
 
 A browser-based Brick Breaker game built with vanilla JavaScript and the HTML5 Canvas API. The project implements real-time rendering, custom collision physics, progressively generated brick rows, score tracking, and persistent high scores without a game engine.
 
-Live preview: https://jacobcohn.github.io/brick-breaker-game/
+**Live preview:** https://jacobcohn.github.io/brick-breaker-game/
 
 ## Features
 
